@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Effects Playground</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+      background-color: #f8fafc;
+    }
+
+    /* Beautiful Light Blue & Orange Mesh Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(186, 230, 253, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(254, 215, 170, 0.7) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(224, 242, 254, 0.9) 0%, transparent 60%),
+        radial-gradient(circle at 75% 75%, rgba(253, 186, 116, 0.5) 0%, transparent 50%);
+      background-blend-mode: multiply;
+      filter: blur(40px);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 60px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Centered Brand Identity Block */
+    .brand-identity {
+      text-align: center;
+      margin-bottom: 56px;
+      max-width: 600px;
+    }
+
+    .logo-placeholder-text {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0284c7, #ea580c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.05em;
+    }
+
+    h1 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    /* Layout Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    /* Premium Glassmorphic Cards */
+    .btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      /* Changed to flex-start so content stacks top-to-bottom */
+      align-items: flex-start;
+      justify-content: flex-start;
+      min-height: 240px; /* Increased height to accommodate the image */
+      padding: 0; /* Cleared main padding so image can stretch to edges */
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.45);
+      color: #0f172a;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    /* NEW: Card Image Wrapper & Image Styles */
+    .card-img-wrapper {
+      width: 100%;
+      height: 140px; /* Adjust height of the image area as needed */
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Keeps image proportions clean */
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* NEW: Content Area for Title & Arrow */
+    .card-content {
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-grow: 1; /* Pushes content to fill the remaining space */
+    }
+
+    /* Subtle internal border hover effect */
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0) 50%, rgba(234, 88, 12, 0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .btn-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      z-index: 2;
+      padding-right: 12px;
+    }
+
+    .btn-arrow {
+      font-size: 18px;
+      transform: translateX(0);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0.5;
+      z-index: 2;
+    }
+
+    /* Interaction State Animations */
+    .btn:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.75);
+      border-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 
+        0 20px 40px rgba(15, 23, 42, 0.06),
+        0 1px 3px rgba(15, 23, 42, 0.02);
+    }
+
+    /* Slightly zooms the image on card hover */
+    .btn:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .immg {
+      width: 350px;
+    }
+
+    .btn:hover .btn-arrow {
+      transform: translateX(4px);
+      opacity: 1;
+      color: #ea580c;
+    }
+
+    .btn:active {
+      transform: translateY(-2px);
+    }
+
+    /* Minimalist Footer Layout */
+    .footer {
+      text-align: center;
+      color: #64748b;
+      margin-top: 48px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      h1 { font-size: 34px; }
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .container { padding: 80px 20px 40px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .brand-identity { margin-bottom: 40px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <div class="brand-identity">
+      <div class="logo-container">
+        <img class="immg" src="Betterside Logo 1.png" alt="Betterside Logo">
+      </div>
+      <h1>Projects</h1>
+    </div>
+
+    <div class="grid">
+      <a class="btn" href="https://bettersideserver-cpu.github.io/JOGANAND-FINAL">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="joganand.png" alt="Joganand Township">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">Joganand Township</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+
+
+ <a class="btn" href="https://www.cminfiniaimmersive.com/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="cm.jpg" alt="CM INFINIA">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">CM INFINIA</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+
+
+
+
+      <a class="btn" href="https://www.mdbthelutyens.in/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="MDB.jpg" alt="MDB The Lutyens">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">MDB The Lutyens</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+
+
+
+      <a class="btn" href="https://bettersideserver-cpu.github.io/AnantaStreet/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="ananta.jpg" alt="Ananta Street">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">Ananta Street</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+
+
+
+      <a class="btn" href="https://bettersideserver-cpu.github.io/Cosmos-Quensel_test/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="cosmos.png" alt="Cosmos Quensel">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">Cosmos Quensel</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+     
+
+
+
+
+      <a class="btn" href="https://anshpreetsingh351.github.io/Meraqui/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="Meraque1.png" alt="Meraqui 1">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">Meraqui 1</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="btn" href="https://anshpreetsingh351.github.io/Meraqui-2/">
+        <div class="card-img-wrapper">
+          <img class="card-img" src="Meraque2.png" alt="Meraqui 2">
+        </div>
+        <div class="card-content">
+          <span class="btn-title">Meraqui 2</span>
+          <span class="btn-arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer">SELECT AN EXPERIENCE TO LAUNCH</div>
+  </div>
+
+</body>
+</html>
